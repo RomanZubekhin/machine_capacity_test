@@ -1,4 +1,5 @@
-import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -7,8 +8,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.*;
 
 public class Test {
-    private final static File fileRead = new File("C:\\план.xlsx");
-    private final static File fileWrite = new File("C:\\нрм тест.xlsx");
+    private final static File fileRead = new File("C:\\Users\\user\\Desktop\\план.xlsx");
+    private final static File fileWrite = new File("C:\\Users\\user\\Desktop\\нрм.xlsx");
     private int firstCellRead = 2;
     public static void main(String[] args) {
         int q = readFromExel(fileRead, 2, 3, 6);
@@ -41,14 +42,17 @@ public class Test {
     public static void writeIntoExel(File fileWrite, int quantity){
         try {
             FileInputStream fileInputStream = new FileInputStream(fileWrite);
-            XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
-            XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
-            XSSFCell cell = sheet.getRow(1).getCell(3);
-            cell.setCellValue(quantity);
-            fileInputStream.close();
+            Workbook wb = new XSSFWorkbook(fileInputStream);
+            Sheet sheet = wb.getSheetAt(0);
+            Cell cellQuantity = sheet.getRow(1).getCell(3);
+            cellQuantity.setCellValue(quantity);
 
+            //Re-evaluate formulas with POI's FormulaEvaluator
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+            fileInputStream.close();
             FileOutputStream fileOutputStream = new FileOutputStream(fileWrite);
-            xssfWorkbook.write(fileOutputStream);
+            wb.write(fileOutputStream);
             fileOutputStream.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
