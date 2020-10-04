@@ -6,40 +6,59 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Test {
     private final static File fileRead = new File("C:\\Users\\user\\Desktop\\план.xlsx");
     private final static File fileWrite = new File("C:\\Users\\user\\Desktop\\нрм.xlsx");
-    private int firstCellRead = 2;
-    public static void main(String[] args) {
-        int q = readFromExel(fileRead, 2, 3, 6);
-        writeIntoExel(fileWrite, q);
+
+    public static void main(String[] args) throws IOException {
+        readFromExel(fileRead, 2, 6);
+        print(hashMap);
+        //writeIntoExel(fileWrite, 2);
+
+    }
+    private static HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
+
+    public static void readFromExel(File file, int numArticle, int numQuantity) throws IOException {
+        System.out.println("Enter to method readFromExel");
+        int count = 1;
+        Workbook myExelBook = new XSSFWorkbook(new FileInputStream(file));
+        Sheet myExelSheet = myExelBook.getSheet("Лист1");
+        while (true) {
+            Row row = myExelSheet.getRow(count);
+            String article = null;
+            int quantity = 0;
+            if(!(row.getCell(numArticle) == null)) {
+                if (row.getCell(numArticle).getCellType() == CellType.STRING) {
+                    article = row.getCell(numArticle).getStringCellValue();
+                }
+                if (row.getCell(numQuantity).getCellType() == CellType.NUMERIC) {
+                    quantity = (int) row.getCell(numQuantity).getNumericCellValue();
+                }
+                hashMap.put(article, quantity);
+                count++;
+            }
+
+        }
+        //myExelBook.close();
+        //System.out.println("Exit to method readFromExel");
     }
 
-    public static int readFromExel(File file, int numArticle, int numName, int numQuantity) {
-        int q = 0;
-        XSSFWorkbook myExelBook = null;
-        try {
-            myExelBook = new XSSFWorkbook(new FileInputStream(file));
-            myExelBook.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        XSSFSheet myExelSheet = myExelBook.getSheet("Лист1");
-        XSSFRow row = myExelSheet.getRow(1);
+    public static void print(HashMap<String,Integer> map){
+        System.out.println("Enter to method print");
 
-        if (row.getCell(numArticle).getCellType() == CellType.STRING) {
-            System.out.println(row.getCell(numArticle).getStringCellValue());
+        String article;
+        int quantity;
+        for (Map.Entry<String, Integer> pair : map.entrySet()) {
+            article = pair.getKey();
+            quantity = pair.getValue();
+            System.out.println("Article= " + article + "Quantity=" + quantity);
         }
-        if (row.getCell(numName).getCellType() == CellType.STRING){
-            System.out.println(row.getCell(numName).getStringCellValue());
-        }
-        if (row.getCell(numQuantity).getCellType() == CellType.NUMERIC) {
-            q = (int) row.getCell(numQuantity).getNumericCellValue();
-        }
-        return q;
+        System.out.println("Exit to method print");
     }
-    public static void writeIntoExel(File fileWrite, int quantity){
+   /* public static void writeIntoExel(File fileWrite, int quantity){
         try {
             FileInputStream fileInputStream = new FileInputStream(fileWrite);
             Workbook wb = new XSSFWorkbook(fileInputStream);
@@ -59,6 +78,5 @@ public class Test {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-    }
+    }*/
 }
