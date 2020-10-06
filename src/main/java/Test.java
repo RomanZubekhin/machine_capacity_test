@@ -6,8 +6,8 @@ import java.util.HashMap;
 //import java.util.Map;
 
 public class Test {
-    private final static File fileRead = new File("C:\\Users\\user\\Desktop\\план.xlsx");
-    //private final static File fileWrite = new File("C:\\Users\\user\\Desktop\\нрм.xlsx");
+    private final static File fileRead = new File("D:\\\\план.xlsx");
+    //private final static File fileWrite = new File("D:\\\нрм.xlsx");
     private final static HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
 
     public static void main(String[] args) throws IOException {
