@@ -3,17 +3,19 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 //import java.util.Map;
 
 public class Test {
-    private final static File fileRead = new File("D:\\\\план.xlsx");
-    //private final static File fileWrite = new File("D:\\\нрм.xlsx");
+    private final static File fileRead = new File("D:\\план.xlsx");
+    private final static File fileWrite = new File("D:\\нрм.xlsx");
     private final static HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
 
     public static void main(String[] args) throws IOException {
         readFromExel(fileRead, 2, 6);
         //print(hashMap);
-        //writeIntoExel(fileWrite, 2);
+        writeIntoExel(fileWrite, hashMap);
     }
 
     public static void readFromExel(File file, int numArticle, int numQuantity) throws IOException {
@@ -45,11 +47,20 @@ public class Test {
             FileInputStream fileInputStream = new FileInputStream(fileWrite);
             Workbook wb = new XSSFWorkbook(fileInputStream);
             Sheet sheet = wb.getSheetAt(0);
-            int startCellColumn = 2;
-            int startCellRow = 1;
-            Cell cell= sheet.getRow(1).getCell(3);
-            cell.setCellValue(3);
+            int startCell = 0;
 
+            Iterator<Row> rowIterator = sheet.iterator();
+            while (rowIterator.hasNext()){
+                    Row row = rowIterator.next();
+                    DataFormatter df = new DataFormatter();
+                    Cell cell = row.getCell(0);
+                    String val = df.formatCellValue(cell);
+                    for (Map.Entry<String, Integer> m : hashMap.entrySet()) {
+                        if (m.getKey().equals(val)) {
+                            System.out.println(m.getKey() + " = найден!");
+                        } else System.out.println(m.getKey() + " = не найден!");
+                    }
+            }
             //Re-evaluate formulas with POI's FormulaEvaluator
             wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
             fileInputStream.close();
@@ -57,6 +68,7 @@ public class Test {
             FileOutputStream fileOutputStream = new FileOutputStream(fileWrite);
             wb.write(fileOutputStream);
             fileOutputStream.close();
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
