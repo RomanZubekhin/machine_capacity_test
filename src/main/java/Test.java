@@ -15,7 +15,7 @@ public class Test {
     public static void main(String[] args) throws IOException {
         readFromExel(fileRead, 2, 6);
         //print(hashMap);
-        writeIntoExel(fileWrite, hashMap);
+        checkValueInExel(fileWrite, hashMap);
     }
 
     public static void readFromExel(File file, int numArticle, int numQuantity) throws IOException {
@@ -42,24 +42,31 @@ public class Test {
         }
     }
 
-    public static void writeIntoExel(File fileWrite, HashMap<String, Integer> map){
+    public static void checkValueInExel(File fileWrite, HashMap<String, Integer> map){
         try {
             FileInputStream fileInputStream = new FileInputStream(fileWrite);
             Workbook wb = new XSSFWorkbook(fileInputStream);
             Sheet sheet = wb.getSheetAt(0);
             int startCell = 0;
+            int sizeMap = map.size();
+            int hitCounter = 0;
 
-            Iterator<Row> rowIterator = sheet.iterator();
-            while (rowIterator.hasNext()){
-                    Row row = rowIterator.next();
+            for (Map.Entry<String, Integer> m : map.entrySet()) {
+
+                for (Row row : sheet) {
                     DataFormatter df = new DataFormatter();
-                    Cell cell = row.getCell(0);
+                    Cell cell = row.getCell(startCell);
                     String val = df.formatCellValue(cell);
-                    for (Map.Entry<String, Integer> m : hashMap.entrySet()) {
-                        if (m.getKey().equals(val)) {
-                            System.out.println(m.getKey() + " = найден!");
-                        } else System.out.println(m.getKey() + " = не найден!");
+                    if (m.getKey().equals(val)) {
+                        hitCounter++;
                     }
+                    if (val == null || cell.getCellType() == CellType.BLANK) {
+                        break;
+                    }
+                }
+            }
+            if (sizeMap == hitCounter){
+                System.out.println("Все значения внесены");
             }
             //Re-evaluate formulas with POI's FormulaEvaluator
             wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
@@ -75,6 +82,48 @@ public class Test {
             e.printStackTrace();
         }
     }
+/*
+    public static void writeIntoExel(File fileWrite, HashMap<String, Integer> map){
+        try {
+            FileInputStream fileInputStream = new FileInputStream(fileWrite);
+            Workbook wb = new XSSFWorkbook(fileInputStream);
+            Sheet sheet = wb.getSheetAt(0);
+            int startCell = 0;
+
+            for (Map.Entry<String, Integer> m : map.entrySet()) {
+
+                for (Row row : sheet) {
+                    DataFormatter df = new DataFormatter();
+                    Cell cell = row.getCell(startCell);
+                    String val = df.formatCellValue(cell);
+
+                    if (m.getKey().equals(val)) {
+                        System.out.println(m.getKey() + " = найден!");
+                    }
+                    if (val == null || cell.getCellType() == CellType.BLANK) {
+                        break;
+                    }*/
+                    /*else{
+                        System.out.println(m.getKey() + " = не найден!");
+                    }*//*
+
+                }
+            }
+            //Re-evaluate formulas with POI's FormulaEvaluator
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            fileInputStream.close();
+            //write data
+            FileOutputStream fileOutputStream = new FileOutputStream(fileWrite);
+            wb.write(fileOutputStream);
+            fileOutputStream.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+*/
 
 /*
     public static void print(HashMap<String,Integer> map){
