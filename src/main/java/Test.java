@@ -2,10 +2,9 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-//import java.util.Map;
 
 public class Test {
     private final static File fileRead = new File("D:\\план.xlsx");
@@ -50,23 +49,33 @@ public class Test {
             int startCell = 0;
             int sizeMap = map.size();
             int hitCounter = 0;
-
+            ArrayList<String> arrayList = new ArrayList<String>();
             for (Map.Entry<String, Integer> m : map.entrySet()) {
-
+                boolean flag = false;
                 for (Row row : sheet) {
                     DataFormatter df = new DataFormatter();
                     Cell cell = row.getCell(startCell);
                     String val = df.formatCellValue(cell);
                     if (m.getKey().equals(val)) {
                         hitCounter++;
-                    }
-                    if (val == null || cell.getCellType() == CellType.BLANK) {
+                    }else if (val == null || cell.getCellType() == CellType.BLANK ){
                         break;
                     }
+                    flag = true;
+                }
+                if(flag){
+                    arrayList.add(m.getKey());
                 }
             }
+            System.out.println("sizeMap " + sizeMap);
+            System.out.println("hitCounter " + hitCounter);
             if (sizeMap == hitCounter){
                 System.out.println("Все значения внесены");
+            }else {
+                System.out.println("Не внесены значения для:");
+                for (String s : arrayList) {
+                    System.out.println(s);
+                }
             }
             //Re-evaluate formulas with POI's FormulaEvaluator
             wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
