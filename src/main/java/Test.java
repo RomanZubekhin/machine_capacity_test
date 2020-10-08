@@ -10,11 +10,22 @@ public class Test {
     private final static File fileRead = new File("D:\\план.xlsx");
     private final static File fileWrite = new File("D:\\нрм.xlsx");
     private final static HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
+    private static ArrayList<String> arrayList = new ArrayList<String>();
+    private static boolean flagWrite = false;
 
     public static void main(String[] args) throws IOException {
         readFromExel(fileRead, 2, 6);
         //print(hashMap);
         checkValueInExel(fileWrite, hashMap);
+        if (flagWrite) {
+            System.out.println("Запись данных выполняется...");
+            //writeIntoExel(File fileWrite, HashMap<String, Integer> map)
+        }else{
+            System.out.println("Запись данных не возможна! Внесите в таблицу следующие данные: ");
+            for (String s : arrayList) {
+                System.out.println(s);
+            }
+        }
     }
 
     public static void readFromExel(File file, int numArticle, int numQuantity) throws IOException {
@@ -49,42 +60,29 @@ public class Test {
             int startCell = 0;
             int sizeMap = map.size();
             int hitCounter = 0;
-            ArrayList<String> arrayList = new ArrayList<String>();
             for (Map.Entry<String, Integer> m : map.entrySet()) {
-                boolean flag = false;
+                boolean flag = true;
                 for (Row row : sheet) {
                     DataFormatter df = new DataFormatter();
                     Cell cell = row.getCell(startCell);
                     String val = df.formatCellValue(cell);
                     if (m.getKey().equals(val)) {
                         hitCounter++;
-                    }else if (val == null || cell.getCellType() == CellType.BLANK ){
+                        flag = false;
+                    }else if (val == null  || cell.getCellType() == CellType.BLANK){
                         break;
                     }
-                    flag = true;
                 }
                 if(flag){
                     arrayList.add(m.getKey());
                 }
             }
-            System.out.println("sizeMap " + sizeMap);
-            System.out.println("hitCounter " + hitCounter);
+//            System.out.println("sizeMap " + sizeMap);
+//            System.out.println("hitCounter " + hitCounter);
             if (sizeMap == hitCounter){
-                System.out.println("Все значения внесены");
-            }else {
-                System.out.println("Не внесены значения для:");
-                for (String s : arrayList) {
-                    System.out.println(s);
-                }
+                flagWrite = true;
             }
-            //Re-evaluate formulas with POI's FormulaEvaluator
-            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
             fileInputStream.close();
-            //write data
-            FileOutputStream fileOutputStream = new FileOutputStream(fileWrite);
-            wb.write(fileOutputStream);
-            fileOutputStream.close();
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
