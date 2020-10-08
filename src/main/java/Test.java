@@ -10,7 +10,7 @@ public class Test {
     private final static File fileRead = new File("D:\\план.xlsx");
     private final static File fileWrite = new File("D:\\нрм.xlsx");
     private final static HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
-    private static ArrayList<String> arrayList = new ArrayList<String>();
+    private final static ArrayList<String> arrayList = new ArrayList<String>();
     private static boolean flagWrite = false;
 
     public static void main(String[] args) throws IOException {
@@ -21,7 +21,7 @@ public class Test {
             System.out.println("Запись данных выполняется...");
             //writeIntoExel(File fileWrite, HashMap<String, Integer> map)
         }else{
-            System.out.println("Запись данных не возможна! Внесите в таблицу следующие данные: ");
+            System.out.println("Запись данных не возможна! Внесите в таблицу следующие номера:");
             for (String s : arrayList) {
                 System.out.println(s);
             }
