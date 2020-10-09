@@ -7,19 +7,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Test {
-    private final static File fileRead = new File("D:\\план.xlsx");
-    private final static File fileWrite = new File("D:\\нрм.xlsx");
+    private final static File fileRead = new File("D:\\план - копия.xlsx");
+    private final static File fileWrite = new File("D:\\нрм - копия.xlsx");
     private final static HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
     private final static ArrayList<String> arrayList = new ArrayList<String>();
     private static boolean flagWrite = false;
 
     public static void main(String[] args) throws IOException {
         readFromExel(fileRead, 2, 6);
-        //print(hashMap);
         checkValueInExel(fileWrite, hashMap);
         if (flagWrite) {
             System.out.println("Запись данных выполняется...");
-            //writeIntoExel(File fileWrite, HashMap<String, Integer> map)
+            writeIntoExel(fileWrite, hashMap);
         }else{
             System.out.println("Запись данных не возможна! Внесите в таблицу следующие номера:");
             for (String s : arrayList) {
@@ -77,8 +76,6 @@ public class Test {
                     arrayList.add(m.getKey());
                 }
             }
-//            System.out.println("sizeMap " + sizeMap);
-//            System.out.println("hitCounter " + hitCounter);
             if (sizeMap == hitCounter){
                 flagWrite = true;
             }
@@ -89,33 +86,38 @@ public class Test {
             e.printStackTrace();
         }
     }
-/*
+
     public static void writeIntoExel(File fileWrite, HashMap<String, Integer> map){
         try {
             FileInputStream fileInputStream = new FileInputStream(fileWrite);
             Workbook wb = new XSSFWorkbook(fileInputStream);
             Sheet sheet = wb.getSheetAt(0);
+            boolean flag = false;
             int startCell = 0;
-
             for (Map.Entry<String, Integer> m : map.entrySet()) {
-
+                String article;
+                int quantity;
+                outer:
                 for (Row row : sheet) {
-                    DataFormatter df = new DataFormatter();
                     Cell cell = row.getCell(startCell);
-                    String val = df.formatCellValue(cell);
-
-                    if (m.getKey().equals(val)) {
-                        System.out.println(m.getKey() + " = найден!");
-                    }
-                    if (val == null || cell.getCellType() == CellType.BLANK) {
-                        break;
-                    }*/
-                    /*else{
-                        System.out.println(m.getKey() + " = не найден!");
-                    }*//*
-
+                    article = m.getKey();
+                    quantity = m.getValue();
+                    if (article.equals(cell.getStringCellValue())) {
+                        for (Cell c : row) {
+                            if (c.getCellType() == CellType.BLANK || c.getCellType() == CellType.FORMULA) {
+                                flag = false;
+                            }else if (flag) {
+                                c.setCellValue(quantity);
+                            }else if (c.getCellType() == CellType.NUMERIC) {
+                                flag = true;
+                            }else if (c.equals("end")){
+                                break;
+                            }
+                        }
+                    }else continue outer;
                 }
             }
+
             //Re-evaluate formulas with POI's FormulaEvaluator
             wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
             fileInputStream.close();
@@ -130,19 +132,4 @@ public class Test {
             e.printStackTrace();
         }
     }
-*/
-
-/*
-    public static void print(HashMap<String,Integer> map){
-        String article;
-        int quantity;
-        int count = 1;
-        for (Map.Entry<String, Integer> pair : map.entrySet()) {
-            article = pair.getKey();
-            quantity = pair.getValue();
-            System.out.println(count + ") Article = " + article + " " + "Quantity = " + quantity);
-            count++;
-        }
-    }
-*/
 }
