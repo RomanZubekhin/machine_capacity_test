@@ -19,6 +19,7 @@ public class Test {
         if (flagWrite) {
             System.out.println("Запись данных выполняется...");
             writeIntoExel(fileWrite, hashMap);
+            System.out.println("Готово!");
         }else{
             System.out.println("Запись данных не возможна! Внесите в таблицу следующие номера:");
             for (String s : arrayList) {
@@ -104,17 +105,20 @@ public class Test {
                     quantity = m.getValue();
                     if (article.equals(cell.getStringCellValue())) {
                         for (Cell c : row) {
-                            if (c.getCellType() == CellType.BLANK || c.getCellType() == CellType.FORMULA) {
-                                flag = false;
-                            }else if (flag) {
+                            if (flag) {
                                 c.setCellValue(quantity);
+                                flag = false;
+                            }else if (c.getCellType() == CellType.BLANK || c.getCellType() == CellType.FORMULA) {
+                                flag = false;
                             }else if (c.getCellType() == CellType.NUMERIC) {
                                 flag = true;
                             }else if (c.equals("end")){
                                 break;
                             }
                         }
-                    }else continue outer;
+                    }else if (cell.getStringCellValue().equals("end")){
+                        break;
+                    }
                 }
             }
 
