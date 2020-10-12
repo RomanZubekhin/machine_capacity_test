@@ -9,12 +9,12 @@ import java.util.Map;
 public class Test {
     private final static File fileRead = new File("D:\\план - копия.xlsx");
     private final static File fileWrite = new File("D:\\нрм - копия.xlsx");
-    private final static HashMap<String,Integer> hashMap = new HashMap<String, Integer>();
-    private final static ArrayList<String> arrayList = new ArrayList<String>();
+    private final static HashMap<String,Integer> hashMap = new HashMap<>();
+    private final static ArrayList<String> arrayList = new ArrayList<>();
     private static boolean flagWrite = false;
 
     public static void main(String[] args) throws IOException {
-        readFromExel(fileRead, 2, 6);
+        readFromExel(fileRead, 0, 1);
         checkValueInExel(fileWrite, hashMap);
         if (flagWrite) {
             System.out.println("Запись данных выполняется...");
@@ -29,9 +29,9 @@ public class Test {
     }
 
     public static void readFromExel(File file, int numArticle, int numQuantity) throws IOException {
-        int count = 1;
+        int count = 0;
         Workbook myExelBook = new XSSFWorkbook(new FileInputStream(file));
-        Sheet myExelSheet = myExelBook.getSheet("Лист1");
+        Sheet myExelSheet = myExelBook.getSheet("Лист2");
         while (true) {
             try {
                 Row row = myExelSheet.getRow(count);
@@ -81,8 +81,6 @@ public class Test {
                 flagWrite = true;
             }
             fileInputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,7 +96,6 @@ public class Test {
             for (Map.Entry<String, Integer> m : map.entrySet()) {
                 String article;
                 int quantity;
-                outer:
                 for (Row row : sheet) {
                     Cell cell = row.getCell(startCell);
                     article = m.getKey();
@@ -108,15 +105,15 @@ public class Test {
                             if (flag) {
                                 c.setCellValue(quantity);
                                 flag = false;
-                            }else if (c.getCellType() == CellType.BLANK || c.getCellType() == CellType.FORMULA) {
+                            } else if (c.getCellType() == CellType.BLANK || c.getCellType() == CellType.FORMULA) {
                                 flag = false;
-                            }else if (c.getCellType() == CellType.NUMERIC) {
+                            } else if (c.getCellType() == CellType.NUMERIC) {
                                 flag = true;
-                            }else if (c.equals("end")){
+                            } else if (c.getStringCellValue().equals("end")) {
                                 break;
                             }
                         }
-                    }else if (cell.getStringCellValue().equals("end")){
+                    } else if (cell.getStringCellValue().equals("end")) {
                         break;
                     }
                 }
@@ -130,8 +127,6 @@ public class Test {
             wb.write(fileOutputStream);
             fileOutputStream.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
