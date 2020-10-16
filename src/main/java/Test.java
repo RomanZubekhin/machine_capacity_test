@@ -52,7 +52,7 @@ public class Test {
         }
     }
 
-    public static void checkValueInExel(File fileWrite, HashMap<String, Integer> map){
+    public static boolean checkValueInExel(File fileWrite, HashMap<String, Integer> map){
         try {
             FileInputStream fileInputStream = new FileInputStream(fileWrite);
             Workbook wb = new XSSFWorkbook(fileInputStream);
@@ -84,6 +84,7 @@ public class Test {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return flagWrite;
     }
 
     public static void writeIntoExel(File fileWrite, HashMap<String, Integer> map){
