@@ -11,14 +11,14 @@ public class Test {
     private final static File fileWrite = new File("D:\\нрм - копия.xlsx");
     private final static HashMap<String,Integer> hashMap = new HashMap<>();
     private final static ArrayList<String> arrayList = new ArrayList<>();
-    private static boolean flagWrite = false;
+
 
     public static void main(String[] args) throws IOException {
-        readFromExel(fileRead, 0, 1);
-        checkValueInExel(fileWrite, hashMap);
-        if (flagWrite) {
+        readFromExelAndWriteHashMap(fileRead, 0, 1);
+
+        if (checkArticleInExel(fileWrite, hashMap)) {
             System.out.println("Запись данных выполняется...");
-            writeIntoExel(fileWrite, hashMap);
+            writeIntoExelNorm(fileWrite, hashMap);
             System.out.println("Готово!");
         }else{
             System.out.println("Запись данных не возможна! Внесите в таблицу следующие номера:");
@@ -28,7 +28,7 @@ public class Test {
         }
     }
 
-    public static void readFromExel(File file, int numArticle, int numQuantity) throws IOException {
+    public static void readFromExelAndWriteHashMap(File file, int numArticle, int numQuantity) throws IOException {
         int count = 0;
         Workbook myExelBook = new XSSFWorkbook(new FileInputStream(file));
         Sheet myExelSheet = myExelBook.getSheet("Лист2");
@@ -52,7 +52,8 @@ public class Test {
         }
     }
 
-    public static boolean checkValueInExel(File fileWrite, HashMap<String, Integer> map){
+    public static boolean checkArticleInExel(File fileWrite, HashMap<String, Integer> map){
+        boolean flagWrite = false;
         try {
             FileInputStream fileInputStream = new FileInputStream(fileWrite);
             Workbook wb = new XSSFWorkbook(fileInputStream);
@@ -87,7 +88,7 @@ public class Test {
         return flagWrite;
     }
 
-    public static void writeIntoExel(File fileWrite, HashMap<String, Integer> map){
+    public static void writeIntoExelNorm(File fileWrite, HashMap<String, Integer> map){
         try {
             FileInputStream fileInputStream = new FileInputStream(fileWrite);
             Workbook wb = new XSSFWorkbook(fileInputStream);
