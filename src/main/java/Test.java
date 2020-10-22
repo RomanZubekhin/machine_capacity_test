@@ -16,7 +16,7 @@ public class Test {
     public static void main(String[] args) {
         readFromExelAndWriteHashMap(fileRead, hashMap);
 
-        if (checkArticleInExel(fileWrite, hashMap)) {
+        if (checkArticleInExel(fileWrite, hashMap, arrayList)) {
             System.out.println("Запись данных выполняется...");
             writeIntoExelNorm(fileWrite, hashMap);
             System.out.println("Готово!");
@@ -53,7 +53,7 @@ public class Test {
         }
     }
 
-    public static boolean checkArticleInExel(File fileWrite, HashMap<String, Integer> map){
+    public static boolean checkArticleInExel(File fileWrite, HashMap<String, Integer> map, ArrayList<String> array){
         boolean flagWrite = false;
         try {
             FileInputStream fileInputStream = new FileInputStream(fileWrite);
@@ -76,7 +76,7 @@ public class Test {
                     }
                 }
                 if(flag){
-                    arrayList.add(m.getKey());
+                    array.add(m.getKey());
                 }
             }
             if (sizeMap == hitCounter){
